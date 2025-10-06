@@ -1,4 +1,4 @@
-package com.SibongbongPot.Sibongbong_backend;
+package com.SibongbongPot.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
