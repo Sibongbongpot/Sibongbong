@@ -27,10 +27,20 @@ public class PlaceController {
         return placeService.findPlacesByCity(city);
     }
 
-    // 단일 장소 상세 정보 조회 (새로 추가!)
+    // 단일 장소 상세 정보 조회
     // GET /api/places/1 와 같은 요청을 처리합니다.
     @GetMapping("/{placeId}")
     public Optional<Place> getPlaceById(@PathVariable Long placeId) {
         return placeService.findPlaceById(placeId);
+    }
+
+    // 주변 장소 검색 API
+    // GET /api/places/nearby?lat=37.79&lng=126.69&category=restaurant
+    @GetMapping("/nearby")
+    public List<Place> getNearbyPlaces(
+            @RequestParam Double lat,
+            @RequestParam Double lng,
+            @RequestParam String category) {
+        return placeService.findNearbyPlaces(lat, lng, category);
     }
 }
