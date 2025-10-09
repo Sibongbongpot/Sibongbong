@@ -12,6 +12,7 @@ import java.util.Optional;
 public class PlaceService {
 
     private final PlaceRepository placeRepository;
+    private static final Double SEARCH_DISTANCE_KM = 1.0; // 1km 반경으로 검색
 
     public PlaceService(PlaceRepository placeRepository) {
         this.placeRepository = placeRepository;
@@ -23,9 +24,14 @@ public class PlaceService {
         return placeRepository.findByCity(city);
     }
 
-    // ID로 특정 장소 하나를 찾는 메소드 (새로 추가!)
+    // ID로 특정 장소 하나를 찾는 메소드
     public Optional<Place> findPlaceById(Long id) {
         // Repository에 이미 있는 findById 메소드를 호출합니다.
         return placeRepository.findById(id);
+    }
+
+    // 주변 장소를 찾는 서비스 메소드
+    public List<Place> findNearbyPlaces(Double lat, Double lng, String category) {
+        return placeRepository.findNearbyPlaces(lat, lng, SEARCH_DISTANCE_KM, category);
     }
 }
