@@ -1,1 +1,11 @@
-메인 개발 branch입니다
+
+  # Tripmate
+
+  This is a code bundle for Tripmate. The original project is available at https://www.figma.com/design/8JjxVzz5DMOUttRXhNrEd1/Tripmate.
+
+  ## Running the code
+
+  Run `npm i` to install the dependencies.
+
+  Run `npm run dev` to start the development server.
+  
