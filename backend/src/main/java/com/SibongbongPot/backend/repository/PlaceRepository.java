@@ -12,7 +12,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     // JPA가 자동으로 SQL 쿼리를 만들어줍니다.
     List<Place> findByCity(String city);
 
-    // 거리 계산을 위한 네이티브 쿼리 (새로 추가!)
+    // 거리 계산을 위한 네이티브 쿼리
     @Query(value = "SELECT * FROM places p WHERE " +
                    "(6371 * acos(cos(radians(:lat)) * cos(radians(p.lat)) * " +
                    "cos(radians(p.lng) - radians(:lng)) + sin(radians(:lat)) * " +
@@ -25,4 +25,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
             @Param("distance") Double distance,
             @Param("category") String category
     );
+
+    // name 필드에 특정 키워드가 포함(Containing)된 Place들을 찾는 기능
+    List<Place> findByNameContaining(String keyword);
 }
