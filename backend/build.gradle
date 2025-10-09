@@ -35,4 +35,6 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-
+bootRun {
+    systemProperty 'file.encoding', 'UTF-8'
+}
