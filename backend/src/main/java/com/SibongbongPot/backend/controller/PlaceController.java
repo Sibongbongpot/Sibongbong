@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable; // PathVariable import 추가
+import java.util.Optional;
 import java.util.List;
 
 @RestController
@@ -23,5 +25,12 @@ public class PlaceController {
     public List<Place> getPlacesByCity(@RequestParam String city) {
         // Service에게 city를 전달하며 로직 처리를 위임합니다.
         return placeService.findPlacesByCity(city);
+    }
+
+    // 단일 장소 상세 정보 조회 (새로 추가!)
+    // GET /api/places/1 와 같은 요청을 처리합니다.
+    @GetMapping("/{placeId}")
+    public Optional<Place> getPlaceById(@PathVariable Long placeId) {
+        return placeService.findPlaceById(placeId);
     }
 }
