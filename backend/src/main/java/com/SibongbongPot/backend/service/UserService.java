@@ -3,6 +3,8 @@ package com.SibongbongPot.backend.service;
 import com.SibongbongPot.backend.controller.UserSignupRequest;
 import com.SibongbongPot.backend.domain.User;
 import com.SibongbongPot.backend.repository.UserRepository;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.List;
@@ -11,14 +13,19 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder; // PasswordEncoder 주입받기
 
-    public UserService(UserRepository userRepository) {
+    // 생성자 수정
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // 회원가입 로직을 담당할 메소드
     public void signup(UserSignupRequest request) {
-        User newUser = new User(request.getUsername(), request.getPassword());
+        // 비밀번호를 암호화해서 저장
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        User newUser = new User(request.getUsername(), encodedPassword);
         userRepository.save(newUser);
     }
     

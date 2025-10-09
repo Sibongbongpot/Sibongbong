@@ -1,6 +1,12 @@
 {
     "cSpell.words": [
-        "Sibongbong"
+        "jjwt",
+        "jsonwebtoken",
+        "projectlombok",
+        "Sibongbong",
+        "springdoc",
+        "springframework",
+        "webmvc"
     ],
     "java.compile.nullAnalysis.mode": "automatic",
     "java.configuration.updateBuildConfiguration": "interactive"
