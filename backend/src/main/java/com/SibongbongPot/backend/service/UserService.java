@@ -3,7 +3,7 @@ package com.SibongbongPot.backend.service;
 import com.SibongbongPot.backend.controller.UserSignupRequest;
 import com.SibongbongPot.backend.domain.User;
 import com.SibongbongPot.backend.repository.UserRepository;
-
+import com.SibongbongPot.backend.util.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
@@ -14,11 +14,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder; // PasswordEncoder 주입받기
+    private final JwtUtil jwtUtil;
 
     // 생성자 수정
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     // 회원가입 로직을 담당할 메소드
@@ -29,17 +31,20 @@ public class UserService {
         userRepository.save(newUser);
     }
     
-    public String login(String username, String password) {
-        // 1. username으로 사용자를 DB에서 조회합니다.
+     public String login(String username, String password) {
+        // 1. username으로 사용자를 DB에서 조회
         Optional<User> userOptional = userRepository.findByUsername(username);
 
-        // 2. 사용자가 존재하고, 비밀번호가 일치하는지 확인합니다.
-        if (userOptional.isPresent() && userOptional.get().getPassword().equals(password)) {
-            return "로그인 성공"; // 성공 시
+        // 2. 사용자가 존재하고, 입력된 비밀번호를 암호화한 값이 DB의 값과 일치하는지 확인
+        if (userOptional.isPresent() &&
+                passwordEncoder.matches(password, userOptional.get().getPassword())) {
+            
+            // 로그인 성공 시, 해당 username으로 JWT 토큰을 생성해서 반환
+            return jwtUtil.createToken(username);
         } else {
-            return "로그인 실패: 아이디 또는 비밀번호가 잘못되었습니다."; // 실패 시
+            return "로그인 실패: 아이디 또는 비밀번호가 잘못되었습니다.";
         }
-    }
+    }    
 
     // 사용자 취향을 업데이트하는 서비스 메소드
     // 참고: 지금은 '어떤' 사용자인지 구분하는 로직이 없으므로, 임시로 ID를 받아서 처리합니다.

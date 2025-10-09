@@ -1,6 +1,5 @@
 package com.SibongbongPot.backend.controller;
 
-import com.SibongbongPot.backend.domain.User;
 import com.SibongbongPot.backend.service.UserService; // UserService import
 
 import org.springframework.web.bind.annotation.PathVariable;
