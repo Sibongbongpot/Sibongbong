@@ -4,7 +4,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -29,5 +28,17 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + expireTimeMs))
                 .signWith(secretKey) // 최신 버전의 signWith 사용
                 .compact();
+    }
+
+    // 토큰에서 사용자 이름(username) 꺼내기
+    public String getUsername(String token) {
+        return Jwts.parserBuilder().setSigningKey(secretKey).build()
+                .parseClaimsJws(token).getBody().getSubject();
+    }
+
+    // 토큰이 만료되었는지 확인
+    public boolean isExpired(String token) {
+        return Jwts.parserBuilder().setSigningKey(secretKey).build()
+                .parseClaimsJws(token).getBody().getExpiration().before(new Date());
     }
 }

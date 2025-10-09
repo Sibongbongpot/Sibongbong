@@ -63,4 +63,10 @@ public class UserService {
             throw new RuntimeException("User not found");
         }
     }
+
+    // username으로 사용자를 찾는 서비스 메소드
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }
