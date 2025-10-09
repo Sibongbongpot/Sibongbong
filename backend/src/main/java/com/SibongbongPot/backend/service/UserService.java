@@ -5,6 +5,7 @@ import com.SibongbongPot.backend.domain.User;
 import com.SibongbongPot.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+import java.util.List;
 
 @Service // 이 클래스가 비즈니스 로직을 담당하는 서비스임을 선언합니다.
 public class UserService {
@@ -30,6 +31,24 @@ public class UserService {
             return "로그인 성공"; // 성공 시
         } else {
             return "로그인 실패: 아이디 또는 비밀번호가 잘못되었습니다."; // 실패 시
+        }
+    }
+
+    // 사용자 취향을 업데이트하는 서비스 메소드
+    // 참고: 지금은 '어떤' 사용자인지 구분하는 로직이 없으므로, 임시로 ID를 받아서 처리합니다.
+    //      나중에 JWT 인증을 도입하면, 토큰에서 사용자 ID를 꺼내 쓰게 됩니다.
+    public void updateUserPreferences(Long userId, List<String> preferences) {
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            // List<String>을 쉼표로 구분된 하나의 String으로 변환해서 저장
+            String preferencesString = String.join(",", preferences);
+            user.setPreferences(preferencesString);
+            userRepository.save(user);
+        } else {
+            // 사용자를 찾지 못한 경우에 대한 예외 처리 (나중에 구현)
+            throw new RuntimeException("User not found");
         }
     }
 }

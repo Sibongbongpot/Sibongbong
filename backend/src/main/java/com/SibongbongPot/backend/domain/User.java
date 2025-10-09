@@ -28,6 +28,16 @@ public class User {
 
     private String username; // 사용자 아이디
     private String password; // 사용자 비밀번호
+    private String preferences; // 사용자 취향 태그 (예: "activity,food_tour,history")
+    
+    // preferences 필드에 대한 Getter와 Setter도 추가해줍니다.
+    public String getPreferences() {
+        return preferences;
+    }
+
+    public void setPreferences(String preferences) {
+        this.preferences = preferences;
+    }
 
     // 개발자가 직접 사용할 생성자 (id는 자동 생성이므로 제외)
     public User(String username, String password) {
