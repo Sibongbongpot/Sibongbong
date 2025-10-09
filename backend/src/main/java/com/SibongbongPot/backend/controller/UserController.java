@@ -2,7 +2,10 @@ package com.SibongbongPot.backend.controller;
 
 import com.SibongbongPot.backend.domain.User;
 import com.SibongbongPot.backend.service.UserService; // UserService import
+
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,5 +29,16 @@ public class UserController {
     @PostMapping("/api/users/login")
     public String login(@RequestBody LoginRequest request) {
         return userService.login(request.getUsername(), request.getPassword());
+    }
+
+    // 사용자 취향 저장/수정 API
+    // 참고: 지금은 임시로 URL에 사용자 ID를 포함해서 테스트합니다.
+    @PutMapping("/api/users/{userId}/preferences")
+    public String updateUserPreferences(
+            @PathVariable Long userId,
+            @RequestBody PreferencesRequest request) {
+        
+        userService.updateUserPreferences(userId, request.getTags());
+        return "사용자 취향이 저장되었습니다.";
     }
 }
