@@ -1,7 +1,6 @@
 package com.SibongbongPot.backend.config;
 
 import com.SibongbongPot.backend.filter.JwtFilter;
-import com.SibongbongPot.backend.service.UserService;
 import com.SibongbongPot.backend.util.JwtUtil;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -22,7 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserService userService;
     private final JwtUtil jwtUtil;
 
     // Swagger(OpenAPI)의 전역 설정을 위한 Bean
@@ -78,7 +76,7 @@ public class SecurityConfig {
             
             // 우리가 만든 JwtFilter를 Spring Security의 필터 체인에 추가
             // UsernamePasswordAuthenticationFilter 이전에 실행되도록 설정
-            .addFilterBefore(new JwtFilter(userService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
