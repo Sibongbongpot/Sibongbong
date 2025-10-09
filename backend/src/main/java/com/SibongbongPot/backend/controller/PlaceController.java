@@ -43,4 +43,11 @@ public class PlaceController {
             @RequestParam String category) {
         return placeService.findNearbyPlaces(lat, lng, category);
     }
+
+    // 키워드 검색 API
+    // GET /api/places/search?keyword=헤이리
+    @GetMapping("/search")
+    public List<Place> searchPlaces(@RequestParam String keyword) {
+        return placeService.searchPlacesByKeyword(keyword);
+    }
 }

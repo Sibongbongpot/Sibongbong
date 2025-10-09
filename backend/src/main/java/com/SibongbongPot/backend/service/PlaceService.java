@@ -34,4 +34,9 @@ public class PlaceService {
     public List<Place> findNearbyPlaces(Double lat, Double lng, String category) {
         return placeRepository.findNearbyPlaces(lat, lng, SEARCH_DISTANCE_KM, category);
     }
+
+    // 키워드로 장소를 검색하는 서비스 메소드
+    public List<Place> searchPlacesByKeyword(String keyword) {
+        return placeRepository.findByNameContaining(keyword);
+    }
 }
