@@ -1,7 +1,5 @@
 package com.SibongbongPot.backend.controller;
 
-import com.SibongbongPot.backend.controller.AddPlaceRequest;
-import com.SibongbongPot.backend.controller.CreateTripBookRequest;
 import com.SibongbongPot.backend.domain.TripBook;
 import com.SibongbongPot.backend.service.TripBookService;
 import org.springframework.web.bind.annotation.*;
