@@ -50,4 +50,12 @@ public class UserController {
         String username = authentication.getName();
         return userService.findByUsername(username);
     }
+
+    // 비밀번호 변경 API
+    @PutMapping("/api/me/password")
+    public String updatePassword(Authentication authentication, @RequestBody UpdatePasswordRequest request) {
+        String username = authentication.getName();
+        userService.updatePassword(username, request.getCurrentPassword(), request.getNewPassword());
+        return "비밀번호가 성공적으로 변경되었습니다.";
+    }
 }

@@ -70,4 +70,20 @@ public class UserService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+    //비밀번호 변경
+    public void updatePassword(String username, String currentPassword, String newPassword) {
+        // 1. username으로 사용자를 찾습니다.
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 2. 현재 비밀번호가 맞는지 확인합니다.
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 3. 새로운 비밀번호를 암호화해서 저장합니다.
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
 }
