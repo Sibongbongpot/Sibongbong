@@ -1,0 +1,118 @@
+/**
+ * 트립메이트 - 경기권 맞춤형 여행 추천 플랫폼
+ * 메인 App 컴포넌트
+ */
+
+import { useState } from "react";
+import { LoginPage } from "./components/LoginPage";
+import { SignupPage } from "./components/SignupPage";
+import { HomePage } from "./components/HomePage";
+import { MapPage } from "./components/MapPage";
+import { SettingsPage } from "./components/SettingsPage";
+import { TestPage } from "./components/TestPage";
+
+// NOTE: alert() 사용은 Immersive 환경에서 허용되지 않습니다. 대신 커스텀 모달을 사용해야 합니다.
+
+type Screen = "login" | "signup" | "home" | "map" | "settings" | "test";
+
+// 🧪 테스트 모드: true로 설정하면 TestPage가 표시됩니다
+const TEST_MODE = false;
+
+export default function App() {
+  const [currentScreen, setCurrentScreen] =
+    useState<Screen>("login");
+  const [user, setUser] = useState<{
+    username: string;
+    isGuest: boolean;
+  } | null>(null);
+  const [preferences, setPreferences] = useState({
+    purposes: {
+      맛집투어: true,
+      랜드마크투어: true,
+      쇼핑: false,
+      자연감상: false,
+      문화체험: false,
+    },
+    timePreference: "낮" as "낮" | "밤",
+  });
+
+  const handleLogin = (username: string, password: string) => {
+    console.log("로그인:", username, password);
+    setUser({ username, isGuest: false });
+    setCurrentScreen("home");
+  };
+
+  const handleSignup = (
+    username: string,
+    email: string,
+    password: string,
+  ) => {
+    console.log("회원가입 처리:", username, email, password);
+    // 🚨 [수정됨]: alert() 대신 console.log를 사용하고,
+    // 실제 앱에서는 커스텀 알림/모달 UI를 사용해야 합니다.
+    console.log(`${username}님, 회원가입이 완료되었습니다!`);
+    setCurrentScreen("login");
+  };
+
+  const handleGuestMode = () => {
+    setUser({ username: "게스트", isGuest: true });
+    setCurrentScreen("home");
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setCurrentScreen("login");
+  };
+
+  // 🧪 테스트 모드 활성화
+  if (TEST_MODE) {
+    return <TestPage />;
+  }
+
+  return (
+    // 💡 테스트 클래스 추가: 배경색을 짙은 회색으로 변경하고 텍스트를 흰색으로 설정
+    // 이 클래스가 적용된다면 Tailwind CSS는 정상 작동하는 것입니다.
+    <div className="size-full bg-slate-900 text-white min-h-screen">
+      {currentScreen === "login" && (
+        <LoginPage
+          onLogin={handleLogin}
+          onGuestMode={handleGuestMode}
+          onSignupClick={() => setCurrentScreen("signup")}
+        />
+      )}
+
+      {currentScreen === "signup" && (
+        <SignupPage
+          onSignup={handleSignup}
+          onBackToLogin={() => setCurrentScreen("login")}
+        />
+      )}
+
+      {currentScreen === "home" && user && (
+        <HomePage
+          username={user.username}
+          preferences={preferences}
+          onNavigateToMap={() => setCurrentScreen("map")}
+          onNavigateToSettings={() =>
+            setCurrentScreen("settings")
+          }
+          onLogout={handleLogout}
+        />
+      )}
+
+      {currentScreen === "map" && (
+        <MapPage onBack={() => setCurrentScreen("home")} />
+      )}
+
+      {currentScreen === "settings" && user && (
+        <SettingsPage
+          username={user.username}
+          preferences={preferences}
+          onPreferencesChange={setPreferences}
+          onBack={() => setCurrentScreen("home")}
+          onLogout={handleLogout}
+        />
+      )}
+    </div>
+  );
+}
