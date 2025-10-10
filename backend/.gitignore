@@ -37,3 +37,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# VCS local history files
+.vcs/
+vcs.xml
+vcs-1/
