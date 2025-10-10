@@ -49,8 +49,9 @@ public class UserService {
     // 사용자 취향을 업데이트하는 서비스 메소드
     // 참고: 지금은 '어떤' 사용자인지 구분하는 로직이 없으므로, 임시로 ID를 받아서 처리합니다.
     //      나중에 JWT 인증을 도입하면, 토큰에서 사용자 ID를 꺼내 쓰게 됩니다.
-    public void updateUserPreferences(Long userId, List<String> preferences) {
-        Optional<User> userOptional = userRepository.findById(userId);
+    public void updateUserPreferences(String username, List<String> preferences) {
+        // ID 대신 username으로 사용자를 찾음
+        Optional<User> userOptional = userRepository.findByUsername(username);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();

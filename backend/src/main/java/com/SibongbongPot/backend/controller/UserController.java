@@ -4,7 +4,7 @@ import com.SibongbongPot.backend.service.UserService;
 import com.SibongbongPot.backend.domain.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,14 +32,14 @@ public class UserController {
         return userService.login(request.getUsername(), request.getPassword());
     }
 
-    // 사용자 취향 저장/수정 API
-    // 참고: 지금은 임시로 URL에 사용자 ID를 포함해서 테스트합니다.
-    @PutMapping("/api/users/{userId}/preferences")
+    // URL에서 {userId}가 빠지고, 엔드포인트를 '/api/me/preferences'로 변경
+    @PutMapping("/api/me/preferences")
     public String updateUserPreferences(
-            @PathVariable Long userId,
+            Authentication authentication, // SecurityContext에서 인증 정보 받아오기
             @RequestBody PreferencesRequest request) {
-        
-        userService.updateUserPreferences(userId, request.getTags());
+
+        String username = authentication.getName(); // 인증 정보에서 사용자 이름 꺼내기
+        userService.updateUserPreferences(username, request.getTags());
         return "사용자 취향이 저장되었습니다.";
     }
 

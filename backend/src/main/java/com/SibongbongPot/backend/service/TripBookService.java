@@ -27,13 +27,10 @@ public class TripBookService {
         this.placeRepository = placeRepository;
     }
 
-    /** 트립북 생성/가져오기 (유저당 최대 1개, 제목 없음) */
-    public TripBook createOrGetTripBook(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
-
-        // 이미 있으면 기존 것 반환
-        return tripBookRepository.findByUserId(userId)
+    /** 트립북 생성/가져오기 */
+    public TripBook createOrGetTripBook(String username) {
+        User user = findUserByUsername(username);
+        return tripBookRepository.findByUserId(user.getId())
                 .orElseGet(() -> {
                     TripBook tb = new TripBook();
                     tb.setUser(user);
@@ -41,31 +38,58 @@ public class TripBookService {
                 });
     }
 
-    /** 내 트립북 목록 (요구사항상 0 또는 1개지만, 응답은 목록 형태 유지) */
-    public List<TripBook> getMyTripBooks(Long userId) {
-        return tripBookRepository.findAllByUserId(userId);
+    /** 내 트립북 목록 */
+    public List<TripBook> getMyTripBooks(String username) {
+        User user = findUserByUsername(username);
+        return tripBookRepository.findAllByUserId(user.getId());
     }
 
-    /** 특정 트립북 상세 */
-    public TripBook getTripBook(Long tripBookId) {
+    /** 특정 트립북 상세 (보안 강화) */
+    public TripBook getTripBook(Long tripBookId, String username) {
+        User user = findUserByUsername(username);
+        TripBook tripBook = findTripBookById(tripBookId);
+        validateTripBookOwner(tripBook, user); // 소유주 확인
+        return tripBook;
+    }
+
+    /** 트립북에 장소 추가 (보안 강화) */
+    public TripBook addPlace(Long tripBookId, Long placeId, String username) {
+        User user = findUserByUsername(username);
+        TripBook tb = findTripBookById(tripBookId);
+        validateTripBookOwner(tb, user); // 소유주 확인
+
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new IllegalArgumentException("Place not found: " + placeId));
+
+        tb.getPlaces().add(place);
+        return tb;
+    }
+
+    /** 트립북에서 장소 삭제 (보안 강화) */
+    public TripBook removePlace(Long tripBookId, Long placeId, String username) {
+        User user = findUserByUsername(username);
+        TripBook tb = findTripBookById(tripBookId);
+        validateTripBookOwner(tb, user); // 소유주 확인
+
+        tb.getPlaces().removeIf(p -> p.getId().equals(placeId));
+        return tb;
+    }
+    
+    // --- 중복 로직을 줄이기 위한 private 헬퍼 메소드들 ---
+
+    private User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
+    }
+
+    private TripBook findTripBookById(Long tripBookId) {
         return tripBookRepository.findById(tripBookId)
                 .orElseThrow(() -> new IllegalArgumentException("TripBook not found: " + tripBookId));
     }
 
-    /** 트립북에 장소 추가 (중복 추가 방지) */
-    public TripBook addPlace(Long tripBookId, Long placeId) {
-        TripBook tb = getTripBook(tripBookId);
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new IllegalArgumentException("Place not found: " + placeId));
-
-        tb.getPlaces().add(place); // Set이라 자동 중복방지
-        return tb; // 트랜잭션 종료 시 flush
-    }
-
-    /** 트립북에서 장소 삭제 */
-    public TripBook removePlace(Long tripBookId, Long placeId) {
-        TripBook tb = getTripBook(tripBookId);
-        tb.getPlaces().removeIf(p -> p.getId().equals(placeId));
-        return tb;
+    private void validateTripBookOwner(TripBook tripBook, User user) {
+        if (!tripBook.getUser().getId().equals(user.getId())) {
+            throw new IllegalStateException("You do not have permission to access this trip book.");
+        }
     }
 }
