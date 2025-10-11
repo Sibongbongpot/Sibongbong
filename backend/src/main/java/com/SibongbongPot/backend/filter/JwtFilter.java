@@ -21,8 +21,8 @@ import java.util.List;
 // OncePerRequestFilter: 모든 요청에 대해 딱 한 번만 실행되는 필터를 만듭니다.
 public class JwtFilter extends OncePerRequestFilter {
 
-    // final 키워드를 사용해 생성자에서 반드시 주입받도록 설정합니다.
-    private final JwtUtil jwtUtil; // 이제 secretKey 대신 JwtUtil을 직접 주입받습니다.
+    // final 키워드를 사용해 생성자에서 반드시 JwtUtil을 주입받도록 설정합니다.
+    private final JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
