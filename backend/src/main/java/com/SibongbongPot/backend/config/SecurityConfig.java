@@ -15,6 +15,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -42,11 +47,14 @@ public class SecurityConfig {
                 .addSecurityItem(securityRequirement)
                 .components(components);
     }
-    
+
     // Spring Security의 필터 체인을 설정하는 Bean
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            // CORS 설정을 Security Filter Chain에 통합합니다.
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            
             // CSRF, Form Login, HTTP Basic 인증을 사용하지 않도록 설정
             .csrf(csrf -> csrf.disable())
             .formLogin(formLogin -> formLogin.disable())
@@ -59,13 +67,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // 아래 명시된 경로들은 인증 없이 누구나 접근 가능
                 .requestMatchers(
-                    "/",
-                    "/api/users/signup",
-                    "/api/users/login",
-                    "/h2-console/**",
-                    "/swagger-ui.html/**",
-                    "/v3/api-docs/**",
-                    "/swagger-ui/**"
+                    "/", "/api/users/signup", "/api/users/login",
+                    "/h2-console/**", "/swagger-ui.html/**", "/v3/api-docs/**", "/swagger-ui/**"
                 ).permitAll()
                 // 나머지 모든 경로는 반드시 인증(로그인)이 필요함
                 .anyRequest().authenticated()
@@ -80,4 +83,24 @@ public class SecurityConfig {
 
         return http.build();
     }
+    
+    // CORS 설정을 위한 별도의 Bean을 등록합니다.
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        // 프론트엔드 서버 주소(http://localhost:3000)를 허용합니다.
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        // 허용할 HTTP 메소드를 지정합니다.
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        // 모든 요청 헤더를 허용합니다.
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        // 인증 정보(쿠키, 토큰 등)를 포함한 요청을 허용합니다.
+        configuration.setAllowCredentials(true);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // 모든 경로("/**")에 대해 위에서 정의한 CORS 설정을 적용합니다.
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }
+
