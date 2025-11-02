@@ -1,3 +1,0 @@
-INSERT INTO places (name, city, lat, lng, category) VALUES ('헤이리 예술마을', 'paju-si', 37.7946, 126.6952, 'tourist_spot');
-INSERT INTO places (name, city, lat, lng, category) VALUES ('임진각 평화누리 공원', 'paju-si', 37.8913, 126.7440, 'tourist_spot');
-INSERT INTO places (name, city, lat, lng, category) VALUES ('수원 화성', 'suwon-si', 37.284, 127.014, 'tourist_spot');
